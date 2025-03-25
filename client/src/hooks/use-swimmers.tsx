@@ -1,107 +1,159 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { queryClient, apiRequest } from "@/lib/queryClient";
-import { Swimmer } from "@shared/schema";
+import { useEffect, useState } from "react";
+import { Swimmer, InsertSwimmer, swimmerSchema } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
+
+// Local storage key
+const SWIMMERS_STORAGE_KEY = 'swimmers-data';
 
 export function useSwimmers() {
   const { toast } = useToast();
-  
-  // Fetch all swimmers
-  const { 
-    data: swimmers = [], 
-    isLoading,
-    isError,
-    error,
-  } = useQuery<Swimmer[]>({
-    queryKey: ['/api/swimmers'],
-  });
+  const [swimmers, setSwimmers] = useState<Swimmer[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load swimmers from localStorage on component mount
+  useEffect(() => {
+    try {
+      const storedSwimmers = localStorage.getItem(SWIMMERS_STORAGE_KEY);
+      if (storedSwimmers) {
+        // Parse and validate the data
+        const parsedSwimmers = JSON.parse(storedSwimmers);
+        const validSwimmers = parsedSwimmers.filter((swimmer: unknown) => 
+          swimmerSchema.safeParse(swimmer).success
+        );
+        setSwimmers(validSwimmers);
+      }
+    } catch (error) {
+      console.error("Failed to load swimmers from localStorage:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to load swimmers from storage"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [toast]);
+
+  // Save swimmers to localStorage whenever they change
+  useEffect(() => {
+    if (!isLoading) {
+      localStorage.setItem(SWIMMERS_STORAGE_KEY, JSON.stringify(swimmers));
+    }
+  }, [swimmers, isLoading]);
 
   // Add a new swimmer
-  const { mutate: addSwimmerMutation } = useMutation({
-    mutationFn: async (name: string) => {
-      const res = await apiRequest("POST", "/api/swimmers", { name, lapCount: 0 });
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/swimmers'] });
+  const addSwimmer = (name: string) => {
+    try {
+      const newSwimmer: Swimmer = {
+        id: Date.now(), // Use timestamp as unique ID
+        name,
+        lapCount: 0
+      };
+      
+      setSwimmers(prevSwimmers => [...prevSwimmers, newSwimmer]);
+      
+      toast({
+        description: `${name} added successfully`
+      });
+    } catch (error) {
+      console.error("Failed to add swimmer:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to add swimmer"
+      });
     }
-  });
+  };
 
   // Delete a swimmer
-  const { mutate: deleteSwimmerMutation } = useMutation({
-    mutationFn: async (id: number) => {
-      await apiRequest("DELETE", `/api/swimmers/${id}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/swimmers'] });
+  const deleteSwimmer = (id: number) => {
+    try {
+      setSwimmers(prevSwimmers => prevSwimmers.filter(swimmer => swimmer.id !== id));
+      
       toast({
         description: "Swimmer removed"
       });
+    } catch (error) {
+      console.error("Failed to delete swimmer:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete swimmer"
+      });
     }
-  });
+  };
 
   // Increment lap count
-  const { mutate: incrementLapMutation } = useMutation({
-    mutationFn: async (id: number) => {
-      const swimmer = swimmers.find(s => s.id === id);
-      if (!swimmer) return;
-      
-      const res = await apiRequest("PATCH", `/api/swimmers/${id}`, {
-        lapCount: swimmer.lapCount + 1
+  const incrementLap = (id: number) => {
+    try {
+      setSwimmers(prevSwimmers => 
+        prevSwimmers.map(swimmer => 
+          swimmer.id === id 
+            ? { ...swimmer, lapCount: swimmer.lapCount + 1 } 
+            : swimmer
+        )
+      );
+    } catch (error) {
+      console.error("Failed to increment lap count:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update lap count"
       });
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/swimmers'] });
     }
-  });
+  };
 
   // Decrement lap count
-  const { mutate: decrementLapMutation } = useMutation({
-    mutationFn: async (id: number) => {
-      const swimmer = swimmers.find(s => s.id === id);
-      if (!swimmer || swimmer.lapCount <= 0) return;
-      
-      const res = await apiRequest("PATCH", `/api/swimmers/${id}`, {
-        lapCount: swimmer.lapCount - 1
+  const decrementLap = (id: number) => {
+    try {
+      setSwimmers(prevSwimmers => 
+        prevSwimmers.map(swimmer => 
+          swimmer.id === id && swimmer.lapCount > 0
+            ? { ...swimmer, lapCount: swimmer.lapCount - 1 } 
+            : swimmer
+        )
+      );
+    } catch (error) {
+      console.error("Failed to decrement lap count:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update lap count"
       });
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/swimmers'] });
     }
-  });
+  };
 
   // Reset lap count
-  const { mutate: resetLapMutation } = useMutation({
-    mutationFn: async (id: number) => {
-      const res = await apiRequest("POST", `/api/swimmers/${id}/reset`);
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/swimmers'] });
+  const resetLapCount = (id: number) => {
+    try {
+      setSwimmers(prevSwimmers => 
+        prevSwimmers.map(swimmer => 
+          swimmer.id === id 
+            ? { ...swimmer, lapCount: 0 } 
+            : swimmer
+        )
+      );
+      
       toast({
         description: "Lap count reset to 0"
       });
+    } catch (error) {
+      console.error("Failed to reset lap count:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to reset lap count"
+      });
     }
-  });
-
-  // If there's an error fetching swimmers, show a toast
-  if (isError && error) {
-    toast({
-      variant: "destructive",
-      title: "Error",
-      description: "Failed to load swimmers",
-    });
-  }
+  };
 
   return {
     swimmers,
     isLoading,
-    addSwimmer: addSwimmerMutation,
-    deleteSwimmer: deleteSwimmerMutation,
-    incrementLap: incrementLapMutation,
-    decrementLap: decrementLapMutation,
-    resetLapCount: resetLapMutation
+    addSwimmer,
+    deleteSwimmer,
+    incrementLap,
+    decrementLap,
+    resetLapCount
   };
 }

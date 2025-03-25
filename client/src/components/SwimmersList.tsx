@@ -1,7 +1,7 @@
 import { Swimmer } from "@shared/schema";
 import SwimmerCard from "@/components/SwimmerCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Pool, SwipeVertical } from "lucide-react";
+import { Waves, MoveHorizontal } from "lucide-react";
 import { useSwimmers } from "@/hooks/use-swimmers";
 
 interface SwimmersListProps {
@@ -43,7 +43,7 @@ export default function SwimmersList({ swimmers, isLoading }: SwimmersListProps)
       <div className="space-y-3 mt-4">
         <div className="bg-white rounded-lg shadow-sm p-6 text-center">
           <div className="flex flex-col items-center justify-center py-8">
-            <Pool className="h-12 w-12 text-primary mb-4" />
+            <Waves className="h-12 w-12 text-primary mb-4" />
             <h2 className="text-xl font-medium text-neutral-dark mb-2">
               No swimmers added yet
             </h2>
@@ -51,7 +51,7 @@ export default function SwimmersList({ swimmers, isLoading }: SwimmersListProps)
               Add your first swimmer using the form above
             </p>
             <div className="flex items-center justify-center text-sm text-gray-400 animate-pulse">
-              <SwipeVertical className="h-4 w-4 mr-1" />
+              <MoveHorizontal className="h-4 w-4 mr-1" />
               <span>Swipe left to delete, right to reset</span>
             </div>
           </div>
