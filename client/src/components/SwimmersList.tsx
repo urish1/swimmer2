@@ -27,9 +27,9 @@ export default function SwimmersList({
       <div className="space-y-3 mt-4">
         {[...Array(3)].map((_, i) => (
           <div key={i} className="bg-white rounded-lg shadow-sm p-4">
-            <div className="flex items-center justify-between">
-              <Skeleton className="h-6 w-1/3" />
-              <div className="flex items-center">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
+              <Skeleton className="h-6 w-1/3 mb-3 sm:mb-0" />
+              <div className="flex items-center self-end sm:self-auto">
                 <Skeleton className="h-10 w-10 rounded-full mr-3" />
                 <Skeleton className="h-16 w-16" />
                 <Skeleton className="h-14 w-14 rounded-full ml-3" />
@@ -51,11 +51,11 @@ export default function SwimmersList({
             <h2 className="text-xl font-medium text-neutral-dark mb-2">
               No swimmers added yet
             </h2>
-            <p className="text-gray-500 mb-4">
+            <p className="text-gray-500 mb-4 text-center">
               Add your first swimmer using the form above
             </p>
-            <div className="flex items-center justify-center text-sm text-gray-400 animate-pulse">
-              <MoveHorizontal className="h-4 w-4 mr-1" />
+            <div className="flex items-center justify-center text-sm text-gray-400 animate-pulse text-center px-4">
+              <MoveHorizontal className="h-4 w-4 mr-1 flex-shrink-0" />
               <span>Swipe left to delete, right to reset</span>
             </div>
           </div>

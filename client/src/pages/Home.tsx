@@ -19,7 +19,7 @@ export default function Home() {
       {/* App Header */}
       <header className="fixed top-0 left-0 right-0 bg-white shadow-md z-10">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <h1 className="text-2xl font-bold text-primary flex items-center">
               <Waves className="mr-2 h-6 w-6" />
               SwimTracker
@@ -30,7 +30,7 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 pt-24 pb-6">
+      <main className="container mx-auto px-4 pt-36 sm:pt-24 pb-6">
         <SwimmersList 
           swimmers={swimmers} 
           isLoading={isLoading}

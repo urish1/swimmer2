@@ -76,13 +76,13 @@ export default function SwimmerCard({
   return (
     <div className="relative overflow-hidden">
       {/* Delete indicator */}
-      <div className={`absolute inset-y-0 left-0 bg-danger text-white flex items-center px-6 h-full pointer-events-none transition-opacity ${swipeDirection === "left" ? "opacity-100" : "opacity-0"}`}>
+      <div className={`absolute inset-y-0 left-0 bg-red-500 text-white flex items-center px-6 h-full pointer-events-none transition-opacity ${swipeDirection === "left" ? "opacity-100" : "opacity-0"}`}>
         <Trash className="h-5 w-5 mr-2" />
         <span>Delete</span>
       </div>
       
       {/* Reset indicator */}
-      <div className={`absolute inset-y-0 right-0 bg-warning text-white flex items-center px-6 h-full pointer-events-none transition-opacity ${swipeDirection === "right" ? "opacity-100" : "opacity-0"}`}>
+      <div className={`absolute inset-y-0 right-0 bg-amber-500 text-white flex items-center px-6 h-full pointer-events-none transition-opacity ${swipeDirection === "right" ? "opacity-100" : "opacity-0"}`}>
         <span>Reset</span>
         <RefreshCw className="h-5 w-5 ml-2" />
       </div>
@@ -99,11 +99,11 @@ export default function SwimmerCard({
         animate={{ x: dragX }}
         className={`bg-white rounded-lg shadow-sm overflow-hidden touch-pan-x`}
       >
-        <div className="p-4 flex items-center justify-between bg-white">
-          <div className="flex-1">
+        <div className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white">
+          <div className="flex-1 mb-3 sm:mb-0">
             <h3 className="text-lg font-medium">{swimmer.name}</h3>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center self-end sm:self-auto">
             <Button 
               variant="outline"
               size="icon"

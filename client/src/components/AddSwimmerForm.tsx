@@ -26,14 +26,14 @@ export default function AddSwimmerForm({ onAddSwimmer }: AddSwimmerFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex-1 max-w-md ml-4">
+    <form onSubmit={handleSubmit} className="w-full sm:flex-1 sm:max-w-md sm:ml-4">
       <div className="relative flex items-center">
         <Input
           type="text"
           placeholder="Add Swimmer"
           value={swimmerName}
           onChange={(e) => setSwimmerName(e.target.value)}
-          className="pr-12 py-2"
+          className="pr-12 py-2 w-full"
           aria-invalid={!!error}
         />
         <Button
