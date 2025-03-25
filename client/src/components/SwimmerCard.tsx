@@ -51,11 +51,11 @@ export default function SwimmerCard({
     if (offsetX < -swipeThreshold) {
       // Left swipe - delete
       onDelete();
+      // No need to reset position as card will be removed
     } else if (offsetX > swipeThreshold) {
       // Right swipe - reset
       onReset();
-      
-      // Animate back to original position
+      // Animate back to original position after operation
       setDragX(0);
     } else {
       // Not enough distance, reset position
@@ -123,7 +123,7 @@ export default function SwimmerCard({
               variant="default"
               size="icon"
               onClick={onIncrement}
-              className="h-14 w-14 rounded-full ml-3 bg-accent hover:bg-accent/90"
+              className="h-14 w-14 rounded-full ml-3 bg-accent hover:bg-accent/90 text-white"
               aria-label="Increase lap count"
             >
               <Plus className="h-6 w-6" />
