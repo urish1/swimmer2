@@ -7,7 +7,11 @@ export default function Home() {
   const { 
     swimmers, 
     isLoading, 
-    addSwimmer
+    addSwimmer,
+    deleteSwimmer,
+    incrementLap,
+    decrementLap,
+    resetLapCount
   } = useSwimmers();
 
   return (
@@ -30,6 +34,10 @@ export default function Home() {
         <SwimmersList 
           swimmers={swimmers} 
           isLoading={isLoading}
+          onDelete={deleteSwimmer}
+          onIncrement={incrementLap}
+          onDecrement={decrementLap}
+          onReset={resetLapCount}
         />
       </main>
     </div>

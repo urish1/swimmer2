@@ -2,20 +2,24 @@ import { Swimmer } from "@shared/schema";
 import SwimmerCard from "@/components/SwimmerCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Waves, MoveHorizontal } from "lucide-react";
-import { useSwimmers } from "@/hooks/use-swimmers";
 
 interface SwimmersListProps {
   swimmers: Swimmer[];
   isLoading: boolean;
+  onDelete: (id: number) => void;
+  onIncrement: (id: number) => void;
+  onDecrement: (id: number) => void;
+  onReset: (id: number) => void;
 }
 
-export default function SwimmersList({ swimmers, isLoading }: SwimmersListProps) {
-  const { 
-    deleteSwimmer, 
-    incrementLap, 
-    decrementLap, 
-    resetLapCount 
-  } = useSwimmers();
+export default function SwimmersList({ 
+  swimmers, 
+  isLoading,
+  onDelete,
+  onIncrement,
+  onDecrement,
+  onReset
+}: SwimmersListProps) {
 
   // Loading state
   if (isLoading) {
@@ -67,10 +71,10 @@ export default function SwimmersList({ swimmers, isLoading }: SwimmersListProps)
         <SwimmerCard
           key={swimmer.id}
           swimmer={swimmer}
-          onDelete={() => deleteSwimmer(swimmer.id)}
-          onIncrement={() => incrementLap(swimmer.id)}
-          onDecrement={() => decrementLap(swimmer.id)}
-          onReset={() => resetLapCount(swimmer.id)}
+          onDelete={() => onDelete(swimmer.id)}
+          onIncrement={() => onIncrement(swimmer.id)}
+          onDecrement={() => onDecrement(swimmer.id)}
+          onReset={() => onReset(swimmer.id)}
         />
       ))}
     </div>

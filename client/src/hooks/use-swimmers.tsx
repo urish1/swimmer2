@@ -5,6 +5,8 @@ import { useToast } from "@/hooks/use-toast";
 // Local storage key
 const SWIMMERS_STORAGE_KEY = 'swimmers-data';
 
+// Custom hook for managing swimmers data
+// Make sure it's a named export with a consistent definition
 export function useSwimmers() {
   const { toast } = useToast();
   const [swimmers, setSwimmers] = useState<Swimmer[]>([]);
