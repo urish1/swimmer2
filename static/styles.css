@@ -249,27 +249,15 @@ body {
 .swimmer-card-content {
   padding: 1rem;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   background-color: var(--card-background);
-}
-
-@media (min-width: 640px) {
-  .swimmer-card-content {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
 }
 
 .swimmer-info {
   flex: 1;
-  margin-bottom: 0.75rem;
-}
-
-@media (min-width: 640px) {
-  .swimmer-info {
-    margin-bottom: 0;
-  }
+  margin-bottom: 0;
 }
 
 .swimmer-name {
