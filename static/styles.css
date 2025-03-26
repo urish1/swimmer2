@@ -241,7 +241,7 @@ body {
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
-  touch-action: pan-x;
+  touch-action: pan-y pan-x;
   user-select: none;
   transition: transform 0.2s;
 }
