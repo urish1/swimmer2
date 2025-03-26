@@ -14,6 +14,7 @@ const translations = {
     emptyTitle: 'No swimmers added yet',
     emptyText: 'Add your first swimmer using the form above',
     swipeHint: 'Swipe left to delete, right to reset',
+    swipeHintRTL: 'Swipe right to delete, left to reset',
     errorRequired: 'Please enter a swimmer name'
   },
   he: {
@@ -25,6 +26,7 @@ const translations = {
     emptyTitle: 'עדיין אין שחיינים',
     emptyText: 'הוסף את השחיין הראשון באמצעות הטופס למעלה',
     swipeHint: 'החלק שמאלה למחיקה, ימינה לאיפוס',
+    swipeHintRTL: 'החלק ימינה למחיקה, שמאלה לאיפוס',
     errorRequired: 'אנא הזן שם שחיין'
   }
 };
@@ -109,6 +111,7 @@ function toggleLanguage() {
 // Update all UI text based on current language
 function updateLanguage() {
   const t = translations[currentLang];
+  const isRTL = document.documentElement.dir === 'rtl';
   
   // Update app title
   document.getElementById('appTitle').textContent = t.appTitle;
@@ -119,7 +122,14 @@ function updateLanguage() {
   // Update empty state
   document.querySelector('.empty-title').textContent = t.emptyTitle;
   document.querySelector('.empty-text').textContent = t.emptyText;
-  document.querySelector('.swipe-hint span').textContent = t.swipeHint;
+  
+  // Update swipe hint based on direction
+  // In RTL mode, the hint should be reversed since the actions are flipped
+  if (isRTL) {
+    document.querySelector('.swipe-hint span').textContent = t.swipeHintRTL || t.swipeHint;
+  } else {
+    document.querySelector('.swipe-hint span').textContent = t.swipeHint;
+  }
 }
 
 // Load swimmers from localStorage
@@ -335,27 +345,27 @@ function setupSwipeActions(card, wrapper, deleteIndicator, resetIndicator, swimm
   }
   
   function updateCardPosition(x) {
-    // Adjust direction based on RTL or LTR
-    let adjustedX = x;
     const isRTL = document.documentElement.dir === 'rtl';
     
-    if (isRTL) {
-      // In RTL, swap left/right swiping
-      adjustedX = -x;
-    }
+    // In LTR: swipe right = reset, swipe left = delete
+    // In RTL: swipe left = reset, swipe right = delete
+    // But we need to show the actual card movement based on the physical direction
     
-    // Limit swiping distance
-    const limitedX = Math.max(Math.min(adjustedX, 150), -150);
+    // Apply the physical movement to the card (no adjustment for RTL/LTR)
+    const limitedX = Math.max(Math.min(x, 150), -150);
     card.style.transform = `translateX(${limitedX}px)`;
     
-    // Show action indicators
-    if (limitedX < 0) {
+    // For indicator opacity, we need to consider RTL/LTR mode
+    if ((!isRTL && limitedX < 0) || (isRTL && limitedX > 0)) {
+      // Show delete indicator
       deleteIndicator.style.opacity = Math.min(Math.abs(limitedX) / 100, 1);
       resetIndicator.style.opacity = 0;
-    } else if (limitedX > 0) {
+    } else if ((!isRTL && limitedX > 0) || (isRTL && limitedX < 0)) {
+      // Show reset indicator
       resetIndicator.style.opacity = Math.min(Math.abs(limitedX) / 100, 1);
       deleteIndicator.style.opacity = 0;
     } else {
+      // No movement
       deleteIndicator.style.opacity = 0;
       resetIndicator.style.opacity = 0;
     }
@@ -364,11 +374,14 @@ function setupSwipeActions(card, wrapper, deleteIndicator, resetIndicator, swimm
   function handleSwipeEnd() {
     const isRTL = document.documentElement.dir === 'rtl';
     
-    if (!isRTL && currentX < -threshold || isRTL && currentX > threshold) {
-      // Swipe left (LTR) or right (RTL) - delete
+    // The swipe actions remain the same:
+    // LTR: left = delete, right = reset
+    // RTL: right = delete, left = reset
+    if ((!isRTL && currentX < -threshold) || (isRTL && currentX > threshold)) {
+      // Swipe left (in LTR) or right (in RTL) - delete
       deleteSwimmer(swimmerId);
-    } else if (!isRTL && currentX > threshold || isRTL && currentX < -threshold) {
-      // Swipe right (LTR) or left (RTL) - reset
+    } else if ((!isRTL && currentX > threshold) || (isRTL && currentX < -threshold)) {
+      // Swipe right (in LTR) or left (in RTL) - reset
       resetLapCount(swimmerId);
     } else {
       // Return to original position
