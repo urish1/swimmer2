@@ -1,6 +1,33 @@
 // State management
 let swimmers = [];
 let nextId = 1;
+let currentLang = 'en'; // Default language
+
+// Translations
+const translations = {
+  en: {
+    appTitle: 'SwimTracker',
+    addSwimmer: 'Add Swimmer',
+    delete: 'Delete',
+    reset: 'Reset',
+    laps: 'laps',
+    emptyTitle: 'No swimmers added yet',
+    emptyText: 'Add your first swimmer using the form above',
+    swipeHint: 'Swipe left to delete, right to reset',
+    errorRequired: 'Please enter a swimmer name'
+  },
+  he: {
+    appTitle: 'מעקב שחייה',
+    addSwimmer: 'הוסף שחיין',
+    delete: 'מחק',
+    reset: 'אפס',
+    laps: 'הקפות',
+    emptyTitle: 'עדיין אין שחיינים',
+    emptyText: 'הוסף את השחיין הראשון באמצעות הטופס למעלה',
+    swipeHint: 'החלק שמאלה למחיקה, ימינה לאיפוס',
+    errorRequired: 'אנא הזן שם שחיין'
+  }
+};
 
 // DOM elements
 const addSwimmerForm = document.getElementById('addSwimmerForm');
@@ -8,14 +35,63 @@ const swimmerNameInput = document.getElementById('swimmerName');
 const errorMessage = document.getElementById('errorMessage');
 const swimmersList = document.getElementById('swimmersList');
 const emptyState = document.getElementById('emptyState');
+const languageToggle = document.getElementById('languageToggle');
 
 // Initialize the app
 function init() {
+  // Load saved language preference
+  loadLanguagePreference();
+  
+  // Load swimmers and render UI
   loadSwimmers();
+  updateLanguage();
   renderSwimmers();
   
   // Event listeners
   addSwimmerForm.addEventListener('submit', handleAddSwimmer);
+  languageToggle.addEventListener('click', toggleLanguage);
+}
+
+// Load language preference from localStorage
+function loadLanguagePreference() {
+  const savedLang = localStorage.getItem('language');
+  if (savedLang === 'en' || savedLang === 'he') {
+    currentLang = savedLang;
+    document.documentElement.dir = currentLang === 'he' ? 'rtl' : 'ltr';
+    document.documentElement.lang = currentLang;
+  }
+}
+
+// Toggle between languages
+function toggleLanguage() {
+  currentLang = currentLang === 'en' ? 'he' : 'en';
+  
+  // Save preference
+  localStorage.setItem('language', currentLang);
+  
+  // Update direction
+  document.documentElement.dir = currentLang === 'he' ? 'rtl' : 'ltr';
+  document.documentElement.lang = currentLang;
+  
+  // Update UI text
+  updateLanguage();
+  renderSwimmers();
+}
+
+// Update all UI text based on current language
+function updateLanguage() {
+  const t = translations[currentLang];
+  
+  // Update app title
+  document.getElementById('appTitle').textContent = t.appTitle;
+  
+  // Update input placeholder
+  swimmerNameInput.placeholder = t.addSwimmer;
+  
+  // Update empty state
+  document.querySelector('.empty-title').textContent = t.emptyTitle;
+  document.querySelector('.empty-text').textContent = t.emptyText;
+  document.querySelector('.swipe-hint span').textContent = t.swipeHint;
 }
 
 // Load swimmers from localStorage
@@ -57,7 +133,7 @@ function handleAddSwimmer(e) {
   
   const name = swimmerNameInput.value.trim();
   if (!name) {
-    errorMessage.textContent = 'Please enter a swimmer name';
+    errorMessage.textContent = translations[currentLang].errorRequired;
     return;
   }
   
@@ -89,6 +165,8 @@ function renderSwimmers() {
 
 // Create HTML element for a swimmer
 function createSwimmerElement(swimmer) {
+  const t = translations[currentLang];
+  
   // Create wrapper element
   const wrapper = document.createElement('div');
   wrapper.className = 'swimmer-card-wrapper';
@@ -102,14 +180,14 @@ function createSwimmerElement(swimmer) {
       <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
       <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
     </svg>
-    <span>Delete</span>
+    <span>${t.delete}</span>
   `;
   
   // Create reset indicator
   const resetIndicator = document.createElement('div');
   resetIndicator.className = 'reset-indicator';
   resetIndicator.innerHTML = `
-    <span>Reset</span>
+    <span>${t.reset}</span>
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 0.5rem;">
       <path d="M21.5 2v6h-6"></path>
       <path d="M2.5 12.5v7h7"></path>
@@ -137,7 +215,7 @@ function createSwimmerElement(swimmer) {
         
         <div class="lap-counter">
           <div class="lap-count">${swimmer.lapCount}</div>
-          <div class="lap-label">laps</div>
+          <div class="lap-label">${t.laps}</div>
         </div>
         
         <button class="increment-button" aria-label="Increase lap count">

@@ -13,6 +13,12 @@
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --radius: 0.5rem;
+  
+  /* Direction-related variables */
+  --direction: ltr;
+  --start: left;
+  --end: right;
+  --text-align: left;
 }
 
 * {
@@ -27,6 +33,7 @@ body {
   color: var(--text-color);
   line-height: 1.5;
   min-height: 100vh;
+  direction: var(--direction);
 }
 
 .container {
@@ -61,12 +68,40 @@ body {
   }
 }
 
+.title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
 .app-title {
   display: flex;
   align-items: center;
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--primary-color);
+}
+
+.language-toggle {
+  display: flex;
+  align-items: center;
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.language-toggle:hover {
+  border-color: var(--primary-color);
+}
+
+.language-toggle svg {
+  margin: 0 0.5rem;
+  color: var(--text-muted);
 }
 
 .waves-icon {
@@ -355,4 +390,61 @@ body {
   50% {
     opacity: 1;
   }
+}
+
+/* RTL overrides */
+html[dir="rtl"] {
+  --direction: rtl;
+  --start: right;
+  --end: left;
+  --text-align: right;
+}
+
+html[dir="rtl"] .waves-icon {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+html[dir="rtl"] .swipe-hint svg {
+  margin-right: 0;
+  margin-left: 0.25rem;
+}
+
+html[dir="rtl"] .add-button {
+  right: auto;
+  left: 0.25rem;
+}
+
+html[dir="rtl"] .swimmer-input {
+  padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+}
+
+html[dir="rtl"] .decrement-button {
+  margin-right: 0;
+  margin-left: 0.75rem;
+}
+
+html[dir="rtl"] .increment-button {
+  margin-left: 0;
+  margin-right: 0.75rem;
+}
+
+html[dir="rtl"] .delete-indicator {
+  left: auto;
+  right: 0;
+}
+
+html[dir="rtl"] .reset-indicator {
+  right: auto;
+  left: 0;
+}
+
+html[dir="rtl"] .delete-indicator svg {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+html[dir="rtl"] .reset-indicator svg {
+  margin-left: 0;
+  margin-right: 0.5rem;
 }
